@@ -1,9 +1,9 @@
 
 from django.db.models import fields
 from rest_framework import serializers
-from .models import Item
+from .models import Image
  
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Item
-        fields = ('name', 'url')
+        model = Image
+        fields = ('name', 'url','created_at','updated_at')
