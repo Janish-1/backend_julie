@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" style="overflow:hidden;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Model Viewer</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"> <!-- Link to external CSS file -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.115/build/three.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.115/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.115/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <div id="options-container">
+            <h2>
+                <center>Alter Model</center>
+            </h2>
+            <div class="option">
+                <label for="shirtColorPicker">Shirt Color:</label>
+                <input type="color" id="shirtColorPicker" value="#ff0000">
+            </div>
+            <div class="option">
+                <label for="pantsColorPicker">Pants Color:</label>
+                <input type="color" id="pantsColorPicker" value="#0000ff">
+            </div>
+            <div class="option">
+                <label for="faceTextureFile">Upload Your Face Texture:</label>
+                <input type="file" id="faceTextureFile" accept=".jpg,.png">
+            </div>
+        </div>
+        <div id="model-container">
+            <canvas id="model-viewer"></canvas>
+        </div>
+    </div>
+
+    <script>
+        var model;
+
+        // Initialize Three.js scene
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('model-viewer') });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0xffffff); // Set background color to white
+        var ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Color, Intensity
+        scene.add(ambientLight);
+
+        // Function to load 3D model
+        function loadModel(modelUrl) {
+            var loader = new THREE.GLTFLoader();
+            loader.load(modelUrl, function (gltf) {
+                model = gltf.scene;
+                scene.add(model);
+
+                // Move model to the center of the scene
+                var box = new THREE.Box3().setFromObject(model);
+                var center = box.getCenter(new THREE.Vector3());
+                model.position.sub(center);
+                model.position.y -= box.min.y; // Adjust height
+
+                // Move camera closer
+                camera.position.z = Math.max(box.max.x, box.max.y, box.max.z) * 2;
+            });
+        }
+
+        // Function to change material color of the object named 'Object_13'
+        function changeMaterialColor(color) {
+            if (model) {
+                model.traverse(function (child) {
+                    if (child.isMesh && child.name === 'Object_13') {
+                        child.material.color.set(color);
+                    }
+                });
+            }
+        }
+
+        // Function to update face texture
+        function updateFaceTexture(file) {
+            var textureLoader = new THREE.TextureLoader();
+            textureLoader.load(URL.createObjectURL(file), function (texture) {
+                if (model) {
+                    model.traverse(function (child) {
+                        if (child.isMesh && child.name === 'Object_15') { // Assuming the face mesh has a specific name
+                            child.material.map = texture;
+                            child.material.needsUpdate = true;
+                        }
+                    });
+                }
+            });
+        }
+
+        // Add mouse controls
+        var controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.enableZoom = true;
+
+        // Render loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+            controls.update(); // Update controls
+        }
+        animate();
+
+        // AJAX request to fetch model URL
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var modelUrl = response[0].url; // Assuming the URL is in the first object of the response array
+                    loadModel(modelUrl);
+                } else {
+                    console.error('Failed to fetch model URL');
+                }
+            }
+        };
+        xhr.open('GET', '/api/getfiles/?name=StandingMan', true); // Replace '/api/getfiles/?name=StandingMan' with your actual API endpoint
+        xhr.send();
+
+        // Event listener for shirt color picker change
+        document.getElementById('shirtColorPicker').addEventListener('change', function (event) {
+            var color = new THREE.Color(event.target.value);
+            changeMaterialColor(color);
+        });
+
+        // Event listener for pants color picker change
+        document.getElementById('pantsColorPicker').addEventListener('change', function (event) {
+            var color = new THREE.Color(event.target.value);
+            changeMaterialColor(color);
+        });
+
+        // Event listener for face texture file input change
+        document.getElementById('faceTextureFile').addEventListener('change', function (event) {
+            var file = event.target.files[0];
+            if (file) {
+                updateFaceTexture(file);
+            }
+        });
+    </script>
+</body>
+
+</html>

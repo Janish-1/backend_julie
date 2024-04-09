@@ -1,0 +1,63 @@
+body, html {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+#container {
+    position: relative;
+}
+
+#model-viewer {
+    width: 100%;
+    height: calc(100vh - 50px); /* Adjust the height as needed */
+}
+
+#options-container {
+    position:fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ccc;
+    z-index: 1; /* Ensure options container is above the model viewer */
+    max-height: 50vh; /* Limit height to the height of the phone view */
+}
+
+.option {
+    margin-bottom: 10px;
+}
+
+@media only screen and (min-width: 768px) {
+    #container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    #model-viewer {
+        width: 60%;
+        height: 80vh;
+        margin-right: 20px;
+    }
+
+    #options-container {
+        position: absolute;
+        width: auto;
+        max-width: 300px;
+        margin: 0;
+        padding: 20px;
+        border-top: none;
+        background-color: transparent;
+        max-height: none; /* Reset max-height for larger screens */
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    #model-viewer {
+        width: 100%;
+        height: calc(50vh - 50px); /* Adjust height for smaller screens */
+    }
+}

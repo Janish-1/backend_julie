@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import serializers,status
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 from .models import Image,d3Model
 from .serializers import ImageSerializer,d3ModelSerializer
  
@@ -18,7 +19,6 @@ def ApiOverview(request):
         '(GET)Get Single File':'api/getfiles/?name=<str:name>',
         '(PATCH)Update File':'api/updatefiles/<int:id>/',
         '(DELETE)Delete File':'api/deletefiles/<int:id>/',
-
     }
  
     return Response(api_urls)
@@ -146,3 +146,6 @@ def delete_file(request, pk):
         return Response(status=status.HTTP_202_ACCEPTED)
     except:
         return Response({'error': 'Failed to delete image'}, status=status.HTTP_400_BAD_REQUEST)
+
+def modelrender(request):
+    return render(request,'modelrender.html')
