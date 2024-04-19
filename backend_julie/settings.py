@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-f$ii3sfa7dpeb8_wyfy%nv!*513_6g@nep--o1*@o(0+2yw=_$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','distinctly-key-hagfish.ngrok-free.app']
 
 
 # Application definition
@@ -38,11 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 1 Added Rest Framework
     'rest_framework',
-    # 2 Added App
     'imager',
     'corsheaders',
+    'corefunctions',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend_julie.urls'
@@ -117,8 +117,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-CORS_ALLOW_ALL_ORIGINS = True
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -139,3 +137,11 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'noreply@ramo.co.in'  # Replace with your cPanel email address
 EMAIL_HOST_PASSWORD = '.OwE6EY5E82c'  # Replace with your cPanel email password
+
+CORS_ALLOWED_ORIGINS = ['http://localhost:8081', 'http://127.0.0.1:8081','https://distinctly-key-hagfish.ngrok-free.app']
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = (
+    "ngrok-skip-browser-warning", 
+)
+
+CSRF_COOKIE_SECURE = True
