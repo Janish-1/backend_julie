@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-f$ii3sfa7dpeb8_wyfy%nv!*513_6g@nep--o1*@o(0+2yw=_$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','distinctly-key-hagfish.ngrok-free.app']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -138,7 +138,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'noreply@ramo.co.in'  # Replace with your cPanel email address
 EMAIL_HOST_PASSWORD = '.OwE6EY5E82c'  # Replace with your cPanel email password
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:8081', 'http://127.0.0.1:8081','https://distinctly-key-hagfish.ngrok-free.app']
+CORS_ALLOWED_ORIGINS = ['http://localhost:8081', 'http://127.0.0.1:8081','https://distinctly-key-hagfish.ngrok-free.app','http://10.0.2.2:8000']
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = (
     "ngrok-skip-browser-warning", 
