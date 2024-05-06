@@ -45,3 +45,9 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+class UserProfile(models.Model):
+    phone_number = models.DecimalField(max_digits=10,decimal_places=2)
+
+    def __str__(self):
+        return self.phone_number

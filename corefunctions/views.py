@@ -10,6 +10,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from twilio.rest import Client
+from .serializers import *
+from .models import *
 
 ACCOUNT_SID = 'ACc64dca282e273911477bd6b168064dc1'
 AUTH_TOKEN = '4ecc384130a5e0bd0b46b74232104044'
@@ -114,3 +116,21 @@ class ProductDetailView(APIView):
         product = self.get_object(pk)
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UserProfileView(APIView):
+    def get(self, request, format=None):
+        phone_number = request.query_params.get('phone_number')
+        if phone_number:
+            profile = UserProfile.objects.filter(phone_number=phone_number).first()
+            if profile:
+                serializer = UserProfileSerializer(profile)
+                return Response(serializer.data)
+            return Response({'message': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, format=None):
+        serializer = UserProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
