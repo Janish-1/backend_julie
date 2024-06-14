@@ -22,4 +22,6 @@ urlpatterns = [
     path('deliverystatus/', DeliveryStatusView.as_view(), name='delivery-status'),
     path('deliverystatus/<int:pk>/', DeliveryStatusDetail.as_view(), name='deliverystatus-detail'),
     path('api/interviews/', InterviewUploadView.as_view(), name='interview-upload'),
+    path('measurements/', MeasurementListView.as_view(), name='measurement_list'),
+    path('measurements/<int:pk>/', MeasurementDetailView.as_view(), name='measurement_detail'),
 ] 

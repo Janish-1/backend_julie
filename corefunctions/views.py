@@ -13,9 +13,9 @@ from twilio.rest import Client
 from .serializers import *
 from .models import *
 
-ACCOUNT_SID = 'ACc64dca282e273911477bd6b168064dc1'
-AUTH_TOKEN = '4ecc384130a5e0bd0b46b74232104044'
-TWILIO_NUMBER = '+12562691854'
+ACCOUNT_SID = 'ACebfd4972dfb43f69d4d1afae2832e841'
+AUTH_TOKEN = '7189e97a17ed91b0c06ba1d95db7b199'
+TWILIO_NUMBER = '+13217326189'
 client = Client(ACCOUNT_SID, AUTH_TOKEN)
 
 @api_view(['POST'])
@@ -67,7 +67,6 @@ class CartItemListView(APIView):
         if not cart_items.exists():
             return Response({'error': 'No cart items found for the provided mobile number'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Serialize each cart item individually
         serialized_items = []
         for cart_item in cart_items:
             serializer = CartItemSerializer(cart_item, data=request.data, partial=True)
@@ -84,7 +83,6 @@ class CartItemListView(APIView):
         if not mobile_no:
             return Response({'error': 'Mobile number is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Delete cart items based on the provided mobile number
         cart_items = CartItem.objects.filter(mobile_no=mobile_no)
         if not cart_items.exists():
             return Response({'error': 'No cart items found for the provided mobile number'}, status=status.HTTP_404_NOT_FOUND)
@@ -255,6 +253,44 @@ class OrderDetailView(APIView):
     def delete(self, request, pk):
         order = self.get_object(pk)
         order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        
+class MeasurementListView(APIView):
+    def get(self, request):
+        measurements = Measurement.objects.all()
+        serializer = MeasurementSerializer(measurements, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = MeasurementSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MeasurementDetailView(APIView):
+    def get_object(self, pk):
+        try:
+            return Measurement.objects.get(pk=pk)
+        except Measurement.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        measurement = self.get_object(pk)
+        serializer = MeasurementSerializer(measurement)
+        return Response(serializer.data)
+
+    def patch(self, request, pk):
+        measurement = self.get_object(pk)
+        serializer = MeasurementSerializer(measurement, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        measurement = self.get_object(pk)
+        measurement.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class TaskListView(APIView):

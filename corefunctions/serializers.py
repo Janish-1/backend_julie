@@ -1,20 +1,72 @@
 from rest_framework import serializers
-from .models import User, Order, CartItem, Product, Task, Leave, Salary, DeliveryPerson, DeliveryStatus, Stock, ManagerProfile, EmployeeDetail, Interview
+from .models import User, Order, CartItem, Product, Task, Leave, Salary, DeliveryPerson, DeliveryStatus, Stock, ManagerProfile, EmployeeDetail, Interview, Measurement
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
 
+
+class MeasurementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Measurement
+        fields = ['id','category', 'chest', 'waist', 'length']
+
 class OrderSerializer(serializers.ModelSerializer):
+    measurement = MeasurementSerializer()
+
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ['id', 'product', 'title', 'mobile_no', 'quantity', 'price', 'discounted_price', 'total_price', 'measurement', 'style', 'estimate_price', 'color', 'shipping_address', 'created_at', 'updated_at']
+
+    def create(self, validated_data):
+        measurement_data = validated_data.pop('measurement')
+        measurement = Measurement.objects.create(**measurement_data)
+        order = Order.objects.create(measurement=measurement, **validated_data)
+        return order
+
+    def update(self, instance, validated_data):
+        measurement_data = validated_data.pop('measurement', None)
+
+        if measurement_data:
+            measurement = instance.measurement
+            for key, value in measurement_data.items():
+                setattr(measurement, key, value)
+            measurement.save()
+
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+
+        return instance
 
 class CartItemSerializer(serializers.ModelSerializer):
+    measurement = MeasurementSerializer()
+
     class Meta:
         model = CartItem
-        fields = '__all__'
+        fields = ['id', 'product', 'title', 'mobile_no', 'quantity', 'price', 'discounted_price', 'total_price', 'measurement', 'style', 'estimate_price', 'color', 'shipping_address']
+
+    def create(self, validated_data):
+        measurement_data = validated_data.pop('measurement')
+        measurement = Measurement.objects.create(**measurement_data)
+        cart_item = CartItem.objects.create(measurement=measurement, **validated_data)
+        return cart_item
+
+    def update(self, instance, validated_data):
+        measurement_data = validated_data.pop('measurement', None)
+
+        if measurement_data:
+            measurement = instance.measurement
+            for key, value in measurement_data.items():
+                setattr(measurement, key, value)
+            measurement.save()
+
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+
+        return instance
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:

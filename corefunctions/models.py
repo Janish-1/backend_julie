@@ -1,6 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User as DjangoUser
 
+CATEGORY_CHOICES = [
+    ('Shirt', 'Shirt'),
+    ('Pant', 'Pant'),
+    ('Coat', 'Coat'),
+    ('Jacket', 'Jacket'),
+    ('NehruJacket', 'NehruJacket'),
+    ('Kurta', 'Kurta'),
+    ('Kameej', 'Kameej'),
+    ('Pathani', 'Pathani'),
+    ('Pajama', 'Pajama'),
+    ('Chudidar', 'Chudidar'),
+]
+
 class User(models.Model):
     email = models.EmailField(unique=True, null=True)
     phone_number = models.CharField(max_length=10)
@@ -35,6 +48,15 @@ class User(models.Model):
         salary.save()
         return salary.actual_salary
 
+class Measurement(models.Model):
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    chest = models.IntegerField(null=True, blank=True, default=0)
+    waist = models.IntegerField(null=True, blank=True, default=0)
+    length = models.IntegerField(null=True, blank=True, default=0)
+
+    def __str__(self):
+        return f"{self.category} Measurement"
+        
 class Order(models.Model):
     product = models.IntegerField()
     title = models.CharField(max_length=255)
@@ -42,32 +64,15 @@ class Order(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discounted_price = models.DecimalField(max_digits=10, decimal_places=2)
-    shirt_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    shirt_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    pant_measurement_waist = models.IntegerField(null=True, blank=True, default=0)
-    pant_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    coat_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    coat_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    jacket_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    jacket_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    nehrujacket_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    nehrujacket_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    kurta_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    kurta_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    kameej_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    kameej_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    pathani_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    pathani_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    pajama_measurement_waist = models.IntegerField(null=True, blank=True, default=0)
-    pajama_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    chudidar_measurement_waist = models.IntegerField(null=True, blank=True, default=0)
-    chudidar_measurement_length = models.IntegerField(null=True, blank=True, default=0)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    chest = models.IntegerField(null=True,blank=True,default=0)
+    waist = models.IntegerField(null=True, blank=True, default=0)
+    length = models.IntegerField(null=True, blank=True, default=0)
     style = models.CharField(null=True, blank=True, max_length=50)
     estimate_price = models.IntegerField(null=True, blank=True)
     color = models.CharField(null=True, blank=True, max_length=20)
     shipping_address = models.CharField(null=True, blank=True, max_length=100)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    shipping_address = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -82,26 +87,10 @@ class CartItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discounted_price = models.DecimalField(max_digits=10, decimal_places=2)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    shirt_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    shirt_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    pant_measurement_waist = models.IntegerField(null=True, blank=True, default=0)
-    pant_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    coat_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    coat_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    jacket_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    jacket_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    nehrujacket_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    nehrujacket_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    kurta_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    kurta_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    kameej_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    kameej_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    pathani_measurement_chest = models.IntegerField(null=True, blank=True, default=0)
-    pathani_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    pajama_measurement_waist = models.IntegerField(null=True, blank=True, default=0)
-    pajama_measurement_length = models.IntegerField(null=True, blank=True, default=0)
-    chudidar_measurement_waist = models.IntegerField(null=True, blank=True, default=0)
-    chudidar_measurement_length = models.IntegerField(null=True, blank=True, default=0)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    chest = models.IntegerField(null=True,blank=True,default=0)
+    waist = models.IntegerField(null=True, blank=True, default=0)
+    length = models.IntegerField(null=True, blank=True, default=0)
     style = models.CharField(null=True, blank=True, max_length=50)
     estimate_price = models.IntegerField(null=True, blank=True)
     color = models.CharField(null=True, blank=True, max_length=20)
@@ -113,18 +102,6 @@ class CartItem(models.Model):
         return f"{self.quantity} x {self.title or 'N/A'} in cart"
 
 class Product(models.Model):
-    CATEGORY_CHOICES = [
-        ('Shirt', 'Shirt'),
-        ('Pant', 'Pant'),
-        ('Coat', 'Coat'),
-        ('Jacket', 'Jacket'),
-        ('NehruJacket', 'NehruJacket'),
-        ('Kurta', 'Kurta'),
-        ('Kameej', 'Kameej'),
-        ('Pathani', 'Pathani'),
-        ('Pajama', 'Pajama'),
-        ('Chudidar', 'Chudidar'),
-    ]
     title = models.CharField(max_length=255, null=True)
     description = models.TextField(max_length=255, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)

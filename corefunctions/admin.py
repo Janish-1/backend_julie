@@ -12,7 +12,8 @@ from .models import (
     Stock,
     ManagerProfile,
     EmployeeDetail,
-    Interview
+    Interview,
+    Measurement
 )
 
 class UserAdmin(admin.ModelAdmin):
@@ -78,6 +79,11 @@ class InterviewAdmin(admin.ModelAdmin):
     search_fields = ('title', 'video_url')
     list_filter = ('uploaded_at',)
 
+class MeasurementAdmin(admin.ModelAdmin):
+    list_display = ('category', 'chest', 'waist', 'length')
+    list_filter = ('category',)
+    search_fields = ('category',)
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(CartItem, CartItemAdmin)
@@ -91,3 +97,4 @@ admin.site.register(Stock, StockAdmin)
 admin.site.register(ManagerProfile, ManagerProfileAdmin)
 admin.site.register(EmployeeDetail, EmployeeDetailAdmin)
 admin.site.register(Interview, InterviewAdmin)
+admin.site.register(Measurement,MeasurementAdmin)
